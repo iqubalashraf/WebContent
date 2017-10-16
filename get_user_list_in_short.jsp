@@ -27,14 +27,13 @@ try{
 	    String jsonString = obj.toJSONString();
 	    out.print(jsonString);
     }else{
-    	/* String sql2 = "UPDATE UPDATE_ME_LIST SET UNIX_TIME='"+unix_time+"' WHERE UID= '"+ uid + "'";
-    	stmt.executeUpdate(sql2); */
+    	String sql2 = "UPDATE UPDATE_ME_LIST SET UNIX_TIME='"+unix_time+"' WHERE UID= '"+ uid + "'";
+    	stmt.executeUpdate(sql2);
     	String sql = "SELECT * FROM UPDATE_ME_LIST";
     	ResultSet rs = stmt.executeQuery(sql);
     	JSONArray jsonArray = new JSONArray();
     	i =0;
     	while(rs.next()){
-    		
     		JSONObject obj = new JSONObject();
     		obj.put("age", rs.getString("AGE"));
     		obj.put("country", rs.getString("COUNTRY"));
@@ -54,32 +53,9 @@ try{
     		obj.put("profile_pic_3_thumbnail", rs.getString("PROFILE_PIC_3_THUMB")); */
     		obj.put("uid", rs.getString("UID"));
     		obj.put("unix_time", rs.getString("UNIX_TIME"));
-    		obj.put("login_type", rs.getString("LOGIN_TYPE"));
+    		/* obj.put("login_type", rs.getString("LOGIN_TYPE")); */
     		jsonArray.add(i, obj);
     		i++;
-    		
-    		/* JSONObject obj = new JSONObject();
-    		obj.put("age", rs.getString("AGE"));
-    		obj.put("country", rs.getString("COUNTRY"));
-    		obj.put("date_of_birth", rs.getString("DOB"));
-    		obj.put("gender", rs.getString("GENDER"));
-    		obj.put("hasProfilePic", rs.getString("HAS_PROFILE_PIC"));
-    		obj.put("hasVerifiedProfilePic", rs.getString("HAS_VERIFIED_PROFILE_PIC"));
-    		obj.put("id", rs.getString("ID"));
-    		obj.put("name", rs.getString("NAME"));
-    		obj.put("profile_pic_main", rs.getString("PROFILE_PIC_MAIN"));
-    		obj.put("profile_pic_main_thumbnail", rs.getString("PROFILE_PIC_MAIN_THUMB"));
-    		obj.put("profile_pic", rs.getString("PROFILE_PIC_1"));
-    		obj.put("profile_pic_thumbnail", rs.getString("PROFILE_PIC_1_THUMB"));
-    		obj.put("profile_pic_2", rs.getString("PROFILE_PIC_2"));
-    		obj.put("profile_pic_2_thumbnail", rs.getString("PROFILE_PIC_2_THUMB"));
-    		obj.put("profile_pic_3", rs.getString("PROFILE_PIC_3"));
-    		obj.put("profile_pic_3_thumbnail", rs.getString("PROFILE_PIC_3_THUMB"));
-    		obj.put("uid", rs.getString("UID"));
-    		obj.put("unix_time", rs.getString("UNIX_TIME"));
-    		obj.put("login_type", rs.getString("LOGIN_TYPE"));
-    		jsonArray.add(i, obj);
-    		i++; */
     	}
 	    String jsonArrayString = jsonArray.toJSONString();
 	    JSONObject obj = new JSONObject();
