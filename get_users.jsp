@@ -17,8 +17,6 @@ try{
 	final String MY_SQL_PASS = "NoidA@123";
 	
 	String auth_id = request.getParameter("auth_id");
-    String ppm = request.getParameter("ppm");
-    String ppmt = request.getParameter("ppmt");
 
 	if(auth_id.equals("")){
 		JSONObject obj = new JSONObject();
@@ -33,7 +31,7 @@ try{
     conn = DriverManager.getConnection(MY_SQL_PATH, MY_SQL_USER_NAME, MY_SQL_PASS);
     Statement stmt = conn.createStatement();
 
-    String sql = "SELECT * FROM user_pics WHERE auth_id='"+ auth_id +"'";
+    String sql = "SELECT * FROM users WHERE auth_id='"+ auth_id +"'";
     ResultSet rs = stmt.executeQuery(sql);
 
 	int i = 0;
@@ -41,30 +39,36 @@ try{
    		i++;
     }
     
-    if(i==0){
+    if(i>0){
+            sql = "SELECT * FROM users ORDER BY last_time DESC";
+            rs = stmt.executeQuery(sql);
+            JSONArray jsonArray = new JSONArray();
 
-            String addQuery = "INSERT INTO user_pics (auth_id, ppm, ppmt, pp1, pp1t, pp2, pp2t, pp3, pp3t)"+
-                " VALUES( '"+ 
-                auth_id + "','" + ppm + "','" + ppmt + "','','' ,'','','','')";
-             stmt.executeUpdate(addQuery);
-             String updateQuery = "UPDATE users SET profile_pic='" + ppmt +
-                "' WHERE auth_id= '"+ auth_id + "'";
-            stmt.executeUpdate(updateQuery); 
-    		 JSONObject obj = new JSONObject();
-    		 obj.put("STATUS", "0");
-    		 obj.put("MSG", "Added");
-    		 jsonString = obj.toJSONString();
-    		 out.print(jsonString);
+            while(rs.next()){
+                JSONObject userInfo = new JSONObject();
+                userInfo.put("user_id", rs.getString("user_id"));
+                userInfo.put("name", rs.getString("name"));
+                userInfo.put("dob", rs.getString("dob"));
+                userInfo.put("gender", rs.getString("gender"));
+                userInfo.put("country", rs.getString("country"));
+                userInfo.put("profile_pic", rs.getString("profile_pic"));
+                userInfo.put("is_verified", rs.getString("is_verified"));
+                userInfo.put("last_time", rs.getString("last_time"));
+                jsonArray.add(userInfo);
+        }
+
+        String jsonArrayString = jsonArray.toJSONString();
+        JSONObject obj = new JSONObject();
+        obj.put("STATUS", "0");
+        obj.put("MSG", "SUCCESSFULLY");
+        obj.put("LIST", jsonArray);
+        jsonString = obj.toJSONString();
+        out.print(jsonString);
+    		 
     }else{
-        String updateQuery = "UPDATE user_pics SET ppm='" + ppm + "', ppmt='"+ ppmt +
-                "' WHERE auth_id= '"+ auth_id + "'";
-        stmt.executeUpdate(updateQuery);
-        updateQuery = "UPDATE users SET profile_pic='" + ppmt +
-                "' WHERE auth_id= '"+ auth_id + "'";
-            stmt.executeUpdate(updateQuery);
     	JSONObject obj = new JSONObject();
 	    obj.put("STATUS", "0");
-	    obj.put("MSG", "Updated");
+	    obj.put("MSG", "AUTH FAILS");
 	    jsonString = obj.toJSONString();
 	    out.print(jsonString);
     }

@@ -17,8 +17,7 @@ try{
 	final String MY_SQL_PASS = "NoidA@123";
 	
 	String auth_id = request.getParameter("auth_id");
-    String ppm = request.getParameter("ppm");
-    String ppmt = request.getParameter("ppmt");
+    String unix_time = String.valueOf(new Date().getTime());
 
 	if(auth_id.equals("")){
 		JSONObject obj = new JSONObject();
@@ -33,41 +32,15 @@ try{
     conn = DriverManager.getConnection(MY_SQL_PATH, MY_SQL_USER_NAME, MY_SQL_PASS);
     Statement stmt = conn.createStatement();
 
-    String sql = "SELECT * FROM user_pics WHERE auth_id='"+ auth_id +"'";
-    ResultSet rs = stmt.executeQuery(sql);
+    String sql = "UPDATE users SET last_time='" + unix_time + "' WHERE auth_id= '"+ auth_id + "'";
+    stmt.executeUpdate(sql);
 
-	int i = 0;
-    while(rs.next()){
-   		i++;
-    }
-    
-    if(i==0){
+    JSONObject obj = new JSONObject();
+    obj.put("STATUS", "0");
+    obj.put("MSG", "SUCCESSFULLY");
+    jsonString = obj.toJSONString();
+    out.print(jsonString);
 
-            String addQuery = "INSERT INTO user_pics (auth_id, ppm, ppmt, pp1, pp1t, pp2, pp2t, pp3, pp3t)"+
-                " VALUES( '"+ 
-                auth_id + "','" + ppm + "','" + ppmt + "','','' ,'','','','')";
-             stmt.executeUpdate(addQuery);
-             String updateQuery = "UPDATE users SET profile_pic='" + ppmt +
-                "' WHERE auth_id= '"+ auth_id + "'";
-            stmt.executeUpdate(updateQuery); 
-    		 JSONObject obj = new JSONObject();
-    		 obj.put("STATUS", "0");
-    		 obj.put("MSG", "Added");
-    		 jsonString = obj.toJSONString();
-    		 out.print(jsonString);
-    }else{
-        String updateQuery = "UPDATE user_pics SET ppm='" + ppm + "', ppmt='"+ ppmt +
-                "' WHERE auth_id= '"+ auth_id + "'";
-        stmt.executeUpdate(updateQuery);
-        updateQuery = "UPDATE users SET profile_pic='" + ppmt +
-                "' WHERE auth_id= '"+ auth_id + "'";
-            stmt.executeUpdate(updateQuery);
-    	JSONObject obj = new JSONObject();
-	    obj.put("STATUS", "0");
-	    obj.put("MSG", "Updated");
-	    jsonString = obj.toJSONString();
-	    out.print(jsonString);
-    }
     if(conn != null){
 		conn.close();
 	}

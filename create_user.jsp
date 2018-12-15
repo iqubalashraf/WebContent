@@ -23,6 +23,9 @@ try{
 	String gender = request.getParameter("gender");
 	String date_created = user_id;
 	String country = request.getParameter("country");
+	String lat_lng = request.getParameter("lat_lng");
+	String address = request.getParameter("address");
+
 	int is_verified = NOT_VERIFIED;
 
 	if(auth_id.equals("")){
@@ -49,10 +52,11 @@ try{
     if(i==0){
     		 sql = "INSERT INTO users (user_id, auth_id, mobile_no, name, dob, gender, date_created, lat_lng, country, address, profile_pic, is_verified)"+
     		  	" VALUES( '"+ 
-    		    user_id + "','" + auth_id + "','" + mobile_no + "','" + name + "','" + dob + "','"+ gender + "','" + date_created + "',' ', '" + country + "',' ',' ', " + is_verified +")";
+    		    user_id + "','" + auth_id + "','" + mobile_no + "','" + name + "','" + dob + "','"+ gender + "','" + date_created + "','" + lat_lng +"', '" + country + "','"+ address +" ',' ', " + is_verified +")";
     		 stmt.executeUpdate(sql);
     		 JSONObject obj = new JSONObject();
     		 obj.put("STATUS", "0");
+    		 obj.put("user_id", user_id)
     		 obj.put("MSG", "ADDED SUCCESSFULLY");
     		 jsonString = obj.toJSONString();
     		 out.print(jsonString);
