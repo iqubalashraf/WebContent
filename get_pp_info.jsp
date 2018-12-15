@@ -44,7 +44,30 @@ try{
             sql = "SELECT auth_id FROM users WHERE user_id='"+ user_id +"'";
             rs = stmt.executeQuery(sql);
             if(rs.next()){
+                String auth_id_friend = rs.getString("auth_id");
+                sql = "SELECT * FROM user_pics WHERE auth_id='"+ auth_id_friend +"'";
+                rs = stmt.executeQuery(sql);
+                JSONObject userInfo = new JSONObject();
+                
+                if(rs.next()){
+                userInfo.put("ppm", rs.getString("ppm"));
+                userInfo.put("ppmt", rs.getString("ppmt"));
+                userInfo.put("pp1", rs.getString("pp1"));
+                userInfo.put("pp1t", rs.getString("pp1t"));
+                userInfo.put("pp2", rs.getString("pp2"));
+                userInfo.put("pp2t", rs.getString("pp2t"));
+                userInfo.put("pp3", rs.getString("pp3"));
+                userInfo.put("pp3t", rs.getString("pp3t"));
 
+                }
+
+                JSONObject obj = new JSONObject();
+                obj.put("STATUS", "0");
+                obj.put("MSG", "SUCCESS");
+                obj.put("USER_PP_INFO", userInfo);
+                jsonString = obj.toJSONString();
+                out.print(jsonString);
+            
             }else{
             JSONObject obj = new JSONObject();
              obj.put("STATUS", "0");
