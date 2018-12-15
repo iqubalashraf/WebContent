@@ -14,6 +14,8 @@ try{
 	final String MY_SQL_PATH = "jdbc:mysql://localhost/s2s";
 	final String MY_SQL_USER_NAME = "ashrafs2smain";
 	final String MY_SQL_PASS = "NoidA@123";
+
+	String unix_time = String.valueOf(new Date().getTime());
 	
 	String user_id =  String.valueOf(new Date().getTime());
 	String auth_id = request.getParameter("auth_id");
@@ -50,13 +52,13 @@ try{
     }
     
     if(i==0){
-    		 sql = "INSERT INTO users (user_id, auth_id, mobile_no, name, dob, gender, date_created, lat_lng, country, address, profile_pic, is_verified)"+
+    		 sql = "INSERT INTO users (user_id, auth_id, mobile_no, name, dob, gender, date_created, lat_lng, country, address, profile_pic, is_verified, last_time)"+
     		  	" VALUES( '"+ 
-    		    user_id + "','" + auth_id + "','" + mobile_no + "','" + name + "','" + dob + "','"+ gender + "','" + date_created + "','" + lat_lng +"', '" + country + "','"+ address +" ',' ', " + is_verified +")";
+    		    user_id + "','" + auth_id + "','" + mobile_no + "','" + name + "','" + dob + "','"+ gender + "','" + date_created + "','" + lat_lng +"', '" + country + "','"+ address +" ',' ', " + is_verified +",'" + unix_time + "')";
     		 stmt.executeUpdate(sql);
     		 JSONObject obj = new JSONObject();
     		 obj.put("STATUS", "0");
-    		 obj.put("user_id", user_id)
+    		 obj.put("user_id", user_id);
     		 obj.put("MSG", "ADDED SUCCESSFULLY");
     		 jsonString = obj.toJSONString();
     		 out.print(jsonString);
