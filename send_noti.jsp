@@ -34,6 +34,7 @@ try{
     String type = request.getParameter("type");
     String viewType = request.getParameter("viewType");
     String unix_time = String.valueOf(new Date().getTime());
+    String from_user_id = "";
 
 	if(auth_id.equals("")){
 		JSONObject obj = new JSONObject();
@@ -54,6 +55,7 @@ try{
 	int i = 0;
     while(rs.next()){
    		i++;
+        from_user_id = rs.getString("user_id");
     }
     
     if(i>0){
@@ -63,7 +65,11 @@ try{
 
         if(rs.next()){
             deviceRegistrationId = rs.getString("token");
-            out.print(deviceRegistrationId);
+            sql = "INSERT INTO messages (auth_id, to_user_id, from_user_id, msg, type, viewType, unix_time)"+
+                " VALUES( '"+ 
+                auth_id + "','" + user_id + "','" + from_user_id + "','" + msg + "','"+ type + "','" + viewType + "','" + unix_time + "')";
+            stmt.executeUpdate(sql);
+            
             if(!deviceRegistrationId.equals("")){
             try{
                 int responseCode = -1;
@@ -71,8 +77,6 @@ try{
                 HashMap<String, String> dataMap = new HashMap<String, String>();
                 JSONObject payloadObject = new JSONObject();
 
-                out.print("Pass1");
-         
                 dataMap.put("\"name\"", "\""+ from_name + "\"");
                 dataMap.put("\"uid\"", "\""+ user_id + "\""); 
                 dataMap.put("\"message\"", "\""+ msg + "\""); 
@@ -80,25 +84,18 @@ try{
                 dataMap.put("\"viewType\"", "\""+ viewType + "\""); 
                 dataMap.put("\"unix_time\"", "\""+ unix_time + "\""); 
                  
-                 out.print("Pass2");
-
-
                 JSONObject data = new JSONObject(dataMap);;
                 payloadObject.put("data", data);
                 payloadObject.put("to", deviceRegistrationId);
                 
                 byte[] postData =  payloadObject.toString().getBytes();
 
-                out.print("Pass3");
-                
                 URL url = new URL(FCM_URL);
                 HttpsURLConnection httpURLConnection = (HttpsURLConnection)url.openConnection();
 
                 //set timeputs to 10 seconds
                 httpURLConnection.setConnectTimeout(10000);
                 httpURLConnection.setReadTimeout(10000);
-
-                out.print("Pass4");
 
                 httpURLConnection.setDoOutput(true);
                 httpURLConnection.setUseCaches(false);
