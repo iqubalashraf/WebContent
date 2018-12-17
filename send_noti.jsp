@@ -78,7 +78,7 @@ try{
                 JSONObject payloadObject = new JSONObject();
 
                 dataMap.put("\"name\"", "\""+ from_name + "\"");
-                dataMap.put("\"uid\"", "\""+ user_id + "\""); 
+                dataMap.put("\"uid\"", "\""+ from_user_id + "\""); 
                 dataMap.put("\"message\"", "\""+ msg + "\""); 
                 dataMap.put("\"type\"", "\""+ type + "\""); 
                 dataMap.put("\"viewType\"", "\""+ viewType + "\""); 
