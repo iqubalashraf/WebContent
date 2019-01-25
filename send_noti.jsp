@@ -65,11 +65,6 @@ try{
 
         if(rs.next()){
             deviceRegistrationId = rs.getString("token");
-            sql = "INSERT INTO messages (auth_id, to_user_id, from_user_id, msg, type, viewType, unix_time)"+
-                " VALUES( '"+ 
-                auth_id + "','" + user_id + "','" + from_user_id + "','" + msg + "','"+ type + "','" + viewType + "','" + unix_time + "')";
-            stmt.executeUpdate(sql);
-            
             if(!deviceRegistrationId.equals("")){
             try{
                 int responseCode = -1;
@@ -152,6 +147,11 @@ try{
                 jsonString = obj.toJSONString();
                 out.print(jsonString);
             }
+            msg.replaceAll("'", "\"");
+            sql = "INSERT INTO messages (auth_id, to_user_id, from_user_id, msg, type, viewType, unix_time)"+
+                " VALUES( '"+ 
+                auth_id + "','" + user_id + "','" + from_user_id + "','" + msg + "','"+ type + "','" + viewType + "','" + unix_time + "')";
+            stmt.executeUpdate(sql);
             JSONObject obj = new JSONObject();
             obj.put("STATUS", "0");
             obj.put("MSG", "NOTIFICATION SENT SUCCESSFULLY");

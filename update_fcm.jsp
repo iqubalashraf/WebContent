@@ -15,6 +15,8 @@ try{
 	final String MY_SQL_PATH = "jdbc:mysql://localhost/s2s";
 	final String MY_SQL_USER_NAME = "ashrafs2smain";
 	final String MY_SQL_PASS = "NoidA@123";
+
+    String unix_time = String.valueOf(new Date().getTime());
 	
 	String auth_id = request.getParameter("auth_id");
     String user_id = request.getParameter("user_id");
@@ -42,10 +44,10 @@ try{
     }
 
     if(i>0){
-    	sql = "UPDATE fcm_tokens SET token='" + token + "' WHERE auth_id= '"+ auth_id + "'";
+    	sql = "UPDATE fcm_tokens SET token='" + token + "', last_updated_time = '"+ unix_time +"' WHERE auth_id= '"+ auth_id + "'";
     	stmt.executeUpdate(sql);
     }else{
-    	sql = "INSERT INTO fcm_tokens(auth_id, user_id, token) VALUES('"+ auth_id +"','"+ user_id +"','"+ token+"')";
+    	sql = "INSERT INTO fcm_tokens(auth_id, user_id, token, last_updated_time, gender) VALUES('"+ auth_id +"','"+ user_id +"','"+ token+"','"+ unix_time +"','"+ "not_kn"+"')";
     	stmt.executeUpdate(sql);
     }
 
