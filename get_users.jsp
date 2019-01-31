@@ -40,7 +40,7 @@ try{
     }
     
     if(i>0){
-            sql = "SELECT * FROM users ORDER BY last_time DESC LIMIT 200";
+            sql = "SELECT * FROM users ORDER BY last_time DESC LIMIT 700";
             rs = stmt.executeQuery(sql);
             JSONArray jsonArray = new JSONArray();
 
