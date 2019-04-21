@@ -17,6 +17,7 @@ try{
 	final String MY_SQL_PASS = "NoidA@123";
 	
 	String auth_id = request.getParameter("auth_id");
+    String gender = request.getParameter("gender");
 
 	if(auth_id.equals("")){
 		JSONObject obj = new JSONObject();
@@ -40,7 +41,11 @@ try{
     }
     
     if(i>0){
-            sql = "SELECT * FROM users ORDER BY last_time DESC LIMIT 700";
+            if("male".equalsIgnoreCase(gender)){
+                sql = "SELECT * FROM users WHERE gender = 'female' ORDER BY last_time DESC LIMIT 500";
+            }else{
+                sql = "SELECT * FROM users WHERE gender = 'male' ORDER BY last_time DESC LIMIT 500";
+            }
             rs = stmt.executeQuery(sql);
             JSONArray jsonArray = new JSONArray();
 
