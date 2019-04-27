@@ -60,8 +60,102 @@ try{
     		 obj.put("STATUS", "0");
     		 obj.put("user_id", user_id);
     		 obj.put("MSG", "ADDED SUCCESSFULLY");
-    		 jsonString = obj.toJSONString();
-    		 out.print(jsonString);
+
+    		if("female".equalsIgnoreCase(gender)){
+                sql = "SELECT * FROM users WHERE gender = 'male' ORDER BY last_time DESC LIMIT 100";
+                rs = stmt.executeQuery(sql);
+                while(rs.next()){
+
+                	String fcm_token = "SELECT * FROM fcm_tokens WHERE user_id='"+ rs.getString("user_id") +"'";
+                	ResultSet token = stmt.executeQuery(fcm_token);
+                	if(token.next()){
+            			deviceRegistrationId = token.getString("token");
+            			if(!deviceRegistrationId.equals("")){
+            				try{
+                				int responseCode = -1;
+                				String responseBody = null;
+                				HashMap<String, String> dataMap = new HashMap<String, String>();
+                				JSONObject payloadObject = new JSONObject();
+
+                				dataMap.put("\"name\"", "\"New user join " + name + "\"");
+                				dataMap.put("\"uid\"", "\"admin\""); 
+                				dataMap.put("\"message\"", "\"new user\""); 
+                				dataMap.put("\"type\"", "\"3\""); 
+                				dataMap.put("\"viewType\"", "\"0\""); 
+                				dataMap.put("\"unix_time\"", "\""+ unix_time + "\""); 
+                 
+                				JSONObject data = new JSONObject(dataMap);;
+                				payloadObject.put("data", data);
+                				payloadObject.put("to", deviceRegistrationId);
+                
+                				byte[] postData =  payloadObject.toString().getBytes();
+
+                				URL url = new URL(FCM_URL);
+                				HttpsURLConnection httpURLConnection = (HttpsURLConnection)url.openConnection();
+
+                //set timeputs to 10 seconds
+                				httpURLConnection.setConnectTimeout(10000);
+                				httpURLConnection.setReadTimeout(10000);
+
+                				httpURLConnection.setDoOutput(true);
+                				httpURLConnection.setUseCaches(false);
+                				httpURLConnection.setRequestMethod("POST");
+                				httpURLConnection.setRequestProperty("Content-Type", "application/json");
+                				httpURLConnection.setRequestProperty("Content-Length", Integer.toString(postData.length));
+                				httpURLConnection.setRequestProperty("Authorization", "key="+FCM_SERVER_API_KEY);
+                				OutputStream out1 = httpURLConnection.getOutputStream();
+                				out1.write(postData);
+                				out1.close();
+                				responseCode = httpURLConnection.getResponseCode();
+                //success
+                				if (responseCode == HttpStatus.SC_OK){
+                    				InputStreamReader inputStream = new InputStreamReader(httpURLConnection.getInputStream());
+                    				BufferedReader bReader = new BufferedReader(inputStream);
+             		
+                    				StringBuilder sb = new StringBuilder();
+                    				String line = null;
+                    				while((line = bReader.readLine()) != null){
+                        				sb.append(line);
+                    				}
+                    				JSONObject obj = new JSONObject();
+                    				obj.put("STATUS", "7");
+                    				obj.put("MSG", responseBody);
+                    				jsonString = obj.toJSONString();
+                    				out.print(jsonString);
+                    				responseBody = sb.toString();
+                    				System.out.println("FCM message sent : " + responseBody);
+                				}else{
+                    				InputStreamReader inputStream = new InputStreamReader(httpURLConnection.getInputStream());
+                    				BufferedReader bReader = new BufferedReader(inputStream);
+             
+                    				StringBuilder sb = new StringBuilder();
+                    				String line = null;
+                    				while((line = bReader.readLine()) != null){
+                       		 			sb.append(line);
+                    				}
+                    				responseBody = sb.toString();
+                    				JSONObject obj = new JSONObject();
+                    				obj.put("STATUS", "6");
+                    				obj.put("MSG", responseBody);
+                    				jsonString = obj.toJSONString();
+                    				out.print(jsonString);
+                    				System.out.println("Sending FCM request failed for regId: " + deviceRegistrationId + " response: " + responseBody);
+                				}
+                
+            				}catch(Exception e){
+                				JSONObject obj = new JSONObject();
+                				obj.put("STATUS", "5");
+                				obj.put("MSG", e.getMessage());
+                				jsonString = obj.toJSONString();
+                				out.print(jsonString);
+            				}
+        				}
+        			}
+        		}
+        	}
+        
+        jsonString = obj.toJSONString();
+    	out.print(jsonString);
     }else{
     	JSONObject obj = new JSONObject();
 	    obj.put("STATUS", "4");
