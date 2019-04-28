@@ -65,21 +65,26 @@ try{
         i++;
     }
     
-    if(i==0){
-    		 sql = "INSERT INTO users (user_id, auth_id, mobile_no, name, dob, gender, date_created, lat_lng, country, address, profile_pic, is_verified, last_time)"+
+    if(i==0 || true){
+    		 /*sql = "INSERT INTO users (user_id, auth_id, mobile_no, name, dob, gender, date_created, lat_lng, country, address, profile_pic, is_verified, last_time)"+
     		  	" VALUES( '"+ 
     		    user_id + "','" + auth_id + "','" + mobile_no + "','" + name + "','" + dob + "','"+ gender + "','" + date_created + "','" + lat_lng +"', '" + country + "','"+ address +" ',' ', " + is_verified +",'" + unix_time + "')";
-    		 stmt.executeUpdate(sql);
-    		 
+    		 stmt.executeUpdate(sql);*/
+    		 JSONObject obj = new JSONObject();
+            obj.put("STATUS", "0");
+            obj.put("user_id", user_id);
+            obj.put("MSG", "ADDED SUCCESSFULLY");
+            jsonString = obj.toJSONString();
+            out.print(jsonString);
 
     		if("female".equalsIgnoreCase(gender)){
 
-                sql = "SELECT * FROM users WHERE gender = 'male' ORDER BY last_time DESC LIMIT 1";
+                sql = "SELECT * FROM users WHERE gender = 'male' ORDER BY last_time DESC LIMIT 100";
                 rs = stmt.executeQuery(sql);
                 while(rs.next()){
                     Statement stmt2 = conn.createStatement();
-                	//String fcm_token = "SELECT * FROM fcm_tokens WHERE user_id = '1556417474369'";
-                    String fcm_token = "SELECT * FROM fcm_tokens WHERE user_id='"+ rs.getString("user_id") +"'";
+                	String fcm_token = "SELECT * FROM fcm_tokens WHERE user_id = '1556419196514'";
+                    //String fcm_token = "SELECT * FROM fcm_tokens WHERE user_id='"+ rs.getString("user_id") +"'";
                 	ResultSet token = stmt2.executeQuery(fcm_token);
                 	if(token.next()){
             			deviceRegistrationId = token.getString("token");
@@ -149,12 +154,7 @@ try{
         			}
         		}
         	}
-        JSONObject obj = new JSONObject();
-    	obj.put("STATUS", "0");
-    	obj.put("user_id", user_id);
-    	obj.put("MSG", "ADDED SUCCESSFULLY");
-        jsonString = obj.toJSONString();
-    	out.print(jsonString);
+        
     }else{
     	JSONObject obj = new JSONObject();
 	    obj.put("STATUS", "4");
