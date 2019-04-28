@@ -65,20 +65,22 @@ try{
         i++;
     }
     
-    if(i>=0){
-    		 /*sql = "INSERT INTO users (user_id, auth_id, mobile_no, name, dob, gender, date_created, lat_lng, country, address, profile_pic, is_verified, last_time)"+
+    if(i==0){
+    		 sql = "INSERT INTO users (user_id, auth_id, mobile_no, name, dob, gender, date_created, lat_lng, country, address, profile_pic, is_verified, last_time)"+
     		  	" VALUES( '"+ 
     		    user_id + "','" + auth_id + "','" + mobile_no + "','" + name + "','" + dob + "','"+ gender + "','" + date_created + "','" + lat_lng +"', '" + country + "','"+ address +" ',' ', " + is_verified +",'" + unix_time + "')";
-    		 stmt.executeUpdate(sql);*/
+    		 stmt.executeUpdate(sql);
     		 
 
-    		if(/*"female".equalsIgnoreCase(gender)*/ true){
+    		if("female".equalsIgnoreCase(gender)){
+
                 sql = "SELECT * FROM users WHERE gender = 'male' ORDER BY last_time DESC LIMIT 100";
                 rs = stmt.executeQuery(sql);
                 while(rs.next()){
-
-                	String fcm_token = "SELECT * FROM fcm_tokens WHERE user_id='"+ rs.getString("user_id") +"'";
-                	ResultSet token = stmt.executeQuery(fcm_token);
+                    Statement stmt2 = conn.createStatement();
+                	//String fcm_token = "SELECT * FROM fcm_tokens WHERE user_id = '1556417474369'";
+                    String fcm_token = "SELECT * FROM fcm_tokens WHERE user_id='"+ rs.getString("user_id") +"'";
+                	ResultSet token = stmt2.executeQuery(fcm_token);
                 	if(token.next()){
             			deviceRegistrationId = token.getString("token");
             			if(!deviceRegistrationId.equals("")){
@@ -88,13 +90,14 @@ try{
                 				HashMap<String, String> dataMap = new HashMap<String, String>();
                 				JSONObject payloadObject = new JSONObject();
 
-                				dataMap.put("\"name\"", "\"New user join " + name + "\"");
+                				dataMap.put("\"name\"", "\"New user join\"");
                 				dataMap.put("\"uid\"", "\"admin\""); 
                 				dataMap.put("\"message\"", "\"new user\""); 
                 				dataMap.put("\"type\"", "\"3\""); 
                 				dataMap.put("\"viewType\"", "\"0\""); 
                 				dataMap.put("\"unix_time\"", "\""+ unix_time + "\""); 
-                 
+                                dataMap.put("\"country\"", "\""+ name + "(Female) just join, Please welcome her.\"");
+
                 				JSONObject data = new JSONObject(dataMap);;
                 				payloadObject.put("data", data);
                 				payloadObject.put("to", deviceRegistrationId);
@@ -104,7 +107,7 @@ try{
                 				URL url = new URL(FCM_URL);
                 				HttpsURLConnection httpURLConnection = (HttpsURLConnection)url.openConnection();
 
-                //set timeputs to 10 seconds
+                                //set timeputs to 10 seconds
                 				httpURLConnection.setConnectTimeout(10000);
                 				httpURLConnection.setReadTimeout(10000);
 
@@ -128,13 +131,6 @@ try{
                     				while((line = bReader.readLine()) != null){
                         				sb.append(line);
                     				}
-                    				JSONObject obj = new JSONObject();
-                    				obj.put("STATUS", "7");
-                    				obj.put("MSG", responseBody);
-                    				jsonString = obj.toJSONString();
-                    				out.print(jsonString);
-                    				responseBody = sb.toString();
-                    				System.out.println("FCM message sent : " + responseBody);
                 				}else{
                     				InputStreamReader inputStream = new InputStreamReader(httpURLConnection.getInputStream());
                     				BufferedReader bReader = new BufferedReader(inputStream);
@@ -145,20 +141,9 @@ try{
                        		 			sb.append(line);
                     				}
                     				responseBody = sb.toString();
-                    				JSONObject obj = new JSONObject();
-                    				obj.put("STATUS", "6");
-                    				obj.put("MSG", responseBody);
-                    				jsonString = obj.toJSONString();
-                    				out.print(jsonString);
-                    				System.out.println("Sending FCM request failed for regId: " + deviceRegistrationId + " response: " + responseBody);
                 				}
                 
             				}catch(Exception e){
-                				JSONObject obj = new JSONObject();
-                				obj.put("STATUS", "5");
-                				obj.put("MSG", e.getMessage());
-                				jsonString = obj.toJSONString();
-                				out.print(jsonString);
             				}
         				}
         			}
