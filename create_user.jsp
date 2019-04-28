@@ -74,7 +74,7 @@ try{
 
     		if("female".equalsIgnoreCase(gender)){
 
-                sql = "SELECT * FROM users WHERE gender = 'male' ORDER BY last_time DESC LIMIT 100";
+                sql = "SELECT * FROM users WHERE gender = 'male' ORDER BY last_time DESC LIMIT 20";
                 rs = stmt.executeQuery(sql);
                 while(rs.next()){
                     Statement stmt2 = conn.createStatement();
