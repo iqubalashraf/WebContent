@@ -3,10 +3,24 @@
 <%@page import="org.json.simple.JSONObject" %>
 <%@page import="java.math.*" %>
 <%@page import="java.util.Date" %>
+
+<%@page import="java.math.*" %>
+<%@page import="java.io.BufferedReader" %>
+<%@page import="java.io.IOException" %>
+<%@page import="java.io.InputStream" %>
+<%@page import="java.io.InputStreamReader" %>
+<%@page import="java.io.OutputStream" %>
+<%@page import="java.net.URL" %>
+<%@page import="java.util.HashMap" %>
+<%@page import="javax.net.ssl.HttpsURLConnection" %>
+<%@page import="org.apache.http.HttpStatus" %>
 <%@page import="org.springframework.dao.DataIntegrityViolationException" %>
 <%
 Connection conn = null;
 String jsonString = null;
+final String FCM_URL = "https://fcm.googleapis.com/fcm/send";
+final String FCM_SERVER_API_KEY    = "AIzaSyCo_4MyWkbe18wlN2NSlXUaSb5oqjRiugo";
+String deviceRegistrationId =  "";
 try{
 	
 	final int NOT_VERIFIED = 0;
@@ -51,17 +65,14 @@ try{
         i++;
     }
     
-    if(i==0){
-    		 sql = "INSERT INTO users (user_id, auth_id, mobile_no, name, dob, gender, date_created, lat_lng, country, address, profile_pic, is_verified, last_time)"+
+    if(i>=0){
+    		 /*sql = "INSERT INTO users (user_id, auth_id, mobile_no, name, dob, gender, date_created, lat_lng, country, address, profile_pic, is_verified, last_time)"+
     		  	" VALUES( '"+ 
     		    user_id + "','" + auth_id + "','" + mobile_no + "','" + name + "','" + dob + "','"+ gender + "','" + date_created + "','" + lat_lng +"', '" + country + "','"+ address +" ',' ', " + is_verified +",'" + unix_time + "')";
-    		 stmt.executeUpdate(sql);
-    		 JSONObject obj = new JSONObject();
-    		 obj.put("STATUS", "0");
-    		 obj.put("user_id", user_id);
-    		 obj.put("MSG", "ADDED SUCCESSFULLY");
+    		 stmt.executeUpdate(sql);*/
+    		 
 
-    		if("female".equalsIgnoreCase(gender)){
+    		if(/*"female".equalsIgnoreCase(gender)*/ true){
                 sql = "SELECT * FROM users WHERE gender = 'male' ORDER BY last_time DESC LIMIT 100";
                 rs = stmt.executeQuery(sql);
                 while(rs.next()){
@@ -153,7 +164,10 @@ try{
         			}
         		}
         	}
-        
+        JSONObject obj = new JSONObject();
+    	obj.put("STATUS", "0");
+    	obj.put("user_id", user_id);
+    	obj.put("MSG", "ADDED SUCCESSFULLY");
         jsonString = obj.toJSONString();
     	out.print(jsonString);
     }else{
